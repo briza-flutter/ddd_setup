@@ -1,0 +1,12 @@
+include: package:flutter_lints/flutter.yaml
+analyzer:
+  plugins:
+    - custom_lint
+  errors:
+    # freezed @JsonKey(name: 'type') required DeviceLightMode mode, 会提示Target不对 实际上可行
+    invalid_annotation_target: ignore
+custom_lint:
+  rules:
+    - avoid_public_notifier_properties: false
+linter:
+  rules:
