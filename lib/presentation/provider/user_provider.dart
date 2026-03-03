@@ -2,7 +2,7 @@ import 'package:ddd_setup/application/auth/auth_use_case.dart';
 import 'package:ddd_setup/application/user/user_use_case.dart';
 import 'package:ddd_setup/common/presentation/extensions/future_extensions.dart';
 import 'package:ddd_setup/config/di.dart';
-import 'package:ddd_setup/domain/auth/models/auth_data.dart';
+import 'package:ddd_setup/domain/auth/models/login_param.dart';
 import 'package:ddd_setup/domain/auth/models/auth_result.dart';
 import 'package:ddd_setup/domain/auth/value_object.dart';
 import 'package:ddd_setup/domain/user/entity/user.dart';
@@ -37,7 +37,7 @@ class UserVm extends _$UserVm {
   Future<AuthResult> login(
       {required PhoneNumber phoneNumber, required Password passwordObj}) async {
     final res = await _authUseCase
-        .login(LoginData(phoneNumber: phoneNumber, password: passwordObj));
+        .login(LoginParam(phoneNumber: phoneNumber, password: passwordObj));
     state = UserStore(user: res.user, token: res.token);
     return res;
   }

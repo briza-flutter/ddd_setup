@@ -4,7 +4,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'auth_data.dart';
+part of 'login_param.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,22 +14,22 @@ part of 'auth_data.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$LoginData {
+mixin _$LoginParam {
   PhoneNumber get phoneNumber;
   Password get password;
 
-  /// Create a copy of LoginData
+  /// Create a copy of LoginParam
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $LoginDataCopyWith<LoginData> get copyWith =>
-      _$LoginDataCopyWithImpl<LoginData>(this as LoginData, _$identity);
+  $LoginParamCopyWith<LoginParam> get copyWith =>
+      _$LoginParamCopyWithImpl<LoginParam>(this as LoginParam, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is LoginData &&
+            other is LoginParam &&
             (identical(other.phoneNumber, phoneNumber) ||
                 other.phoneNumber == phoneNumber) &&
             (identical(other.password, password) ||
@@ -41,26 +41,27 @@ mixin _$LoginData {
 
   @override
   String toString() {
-    return 'LoginData(phoneNumber: $phoneNumber, password: $password)';
+    return 'LoginParam(phoneNumber: $phoneNumber, password: $password)';
   }
 }
 
 /// @nodoc
-abstract mixin class $LoginDataCopyWith<$Res> {
-  factory $LoginDataCopyWith(LoginData value, $Res Function(LoginData) _then) =
-      _$LoginDataCopyWithImpl;
+abstract mixin class $LoginParamCopyWith<$Res> {
+  factory $LoginParamCopyWith(
+          LoginParam value, $Res Function(LoginParam) _then) =
+      _$LoginParamCopyWithImpl;
   @useResult
   $Res call({PhoneNumber phoneNumber, Password password});
 }
 
 /// @nodoc
-class _$LoginDataCopyWithImpl<$Res> implements $LoginDataCopyWith<$Res> {
-  _$LoginDataCopyWithImpl(this._self, this._then);
+class _$LoginParamCopyWithImpl<$Res> implements $LoginParamCopyWith<$Res> {
+  _$LoginParamCopyWithImpl(this._self, this._then);
 
-  final LoginData _self;
-  final $Res Function(LoginData) _then;
+  final LoginParam _self;
+  final $Res Function(LoginParam) _then;
 
-  /// Create a copy of LoginData
+  /// Create a copy of LoginParam
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -83,27 +84,27 @@ class _$LoginDataCopyWithImpl<$Res> implements $LoginDataCopyWith<$Res> {
 
 /// @nodoc
 
-class _LoginData implements LoginData {
-  _LoginData({required this.phoneNumber, required this.password});
+class _LoginParam implements LoginParam {
+  _LoginParam({required this.phoneNumber, required this.password});
 
   @override
   final PhoneNumber phoneNumber;
   @override
   final Password password;
 
-  /// Create a copy of LoginData
+  /// Create a copy of LoginParam
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$LoginDataCopyWith<_LoginData> get copyWith =>
-      __$LoginDataCopyWithImpl<_LoginData>(this, _$identity);
+  _$LoginParamCopyWith<_LoginParam> get copyWith =>
+      __$LoginParamCopyWithImpl<_LoginParam>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _LoginData &&
+            other is _LoginParam &&
             (identical(other.phoneNumber, phoneNumber) ||
                 other.phoneNumber == phoneNumber) &&
             (identical(other.password, password) ||
@@ -115,29 +116,29 @@ class _LoginData implements LoginData {
 
   @override
   String toString() {
-    return 'LoginData(phoneNumber: $phoneNumber, password: $password)';
+    return 'LoginParam(phoneNumber: $phoneNumber, password: $password)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$LoginDataCopyWith<$Res>
-    implements $LoginDataCopyWith<$Res> {
-  factory _$LoginDataCopyWith(
-          _LoginData value, $Res Function(_LoginData) _then) =
-      __$LoginDataCopyWithImpl;
+abstract mixin class _$LoginParamCopyWith<$Res>
+    implements $LoginParamCopyWith<$Res> {
+  factory _$LoginParamCopyWith(
+          _LoginParam value, $Res Function(_LoginParam) _then) =
+      __$LoginParamCopyWithImpl;
   @override
   @useResult
   $Res call({PhoneNumber phoneNumber, Password password});
 }
 
 /// @nodoc
-class __$LoginDataCopyWithImpl<$Res> implements _$LoginDataCopyWith<$Res> {
-  __$LoginDataCopyWithImpl(this._self, this._then);
+class __$LoginParamCopyWithImpl<$Res> implements _$LoginParamCopyWith<$Res> {
+  __$LoginParamCopyWithImpl(this._self, this._then);
 
-  final _LoginData _self;
-  final $Res Function(_LoginData) _then;
+  final _LoginParam _self;
+  final $Res Function(_LoginParam) _then;
 
-  /// Create a copy of LoginData
+  /// Create a copy of LoginParam
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -145,7 +146,7 @@ class __$LoginDataCopyWithImpl<$Res> implements _$LoginDataCopyWith<$Res> {
     Object? phoneNumber = null,
     Object? password = null,
   }) {
-    return _then(_LoginData(
+    return _then(_LoginParam(
       phoneNumber: null == phoneNumber
           ? _self.phoneNumber
           : phoneNumber // ignore: cast_nullable_to_non_nullable

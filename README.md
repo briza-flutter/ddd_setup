@@ -29,7 +29,7 @@ lib/
 ├── domain/                            # 领域层（纯业务逻辑，零框架依赖）
 │   ├── auth/
 │   │   ├── models/
-│   │   │   ├── auth_data.dart         #   LoginData（登录入参）
+│   │   │   ├── login_param.dart       #   LoginParam（登录入参）
 │   │   │   └── auth_result.dart       #   AuthResult（登录结果）
 │   │   ├── repositories/
 │   │   │   ├── auth_repo.dart         #   AuthRepo 抽象（远程认证）
@@ -58,10 +58,10 @@ lib/
 │   │   ├── api/
 │   │   │   ├── auth/
 │   │   │   │   ├── auth.dart          #   AuthApi（登录接口）
-│   │   │   │   └── models/dto.dart    #   LoginDto（请求体）
+│   │   │   │   └── models/login_dto.dart  #   LoginDto（请求体）
 │   │   │   └── user/
 │   │   │       ├── user.dart          #   UserApi（用户接口）
-│   │   │       └── models/vo.dart     #   UserVo（响应体 → Domain 转换）
+│   │   │       └── models/user_model.dart #   UserModel（响应体 → Domain 转换）
 │   │   └── impl/
 │   │       ├── auth_repo_impl.dart    #   AuthRepo 实现
 │   │       └── user_repo_impl.dart    #   UserRepo 实现
@@ -150,7 +150,7 @@ abstract class OrderRepo {
 class OrderApi {
   final DioClient _dioClient;
   OrderApi(this._dioClient);
-  Future<List<OrderVo>> getOrders() async { ... }
+  Future<List<OrderModel>> getOrders() async { ... }
 }
 
 // lib/infrastructure/remote_data/impl/order_repo_impl.dart
@@ -160,8 +160,8 @@ class OrderRepoImpl implements OrderRepo {
   OrderRepoImpl(this._orderApi);
   @override
   Future<List<Order>> getOrders() async {
-    final vos = await _orderApi.getOrders();
-    return vos.map((e) => e.toDomain).toList();
+    final models = await _orderApi.getOrders();
+    return models.map((e) => e.toDomain).toList();
   }
 }
 ```
@@ -202,14 +202,23 @@ dart run build_runner build --delete-conflicting-outputs
 
 在 `routes.dart` 中添加新路由即可。
 
-### DTO / VO / Entity 命名约定
+### 命名约定
 
-| 类型 | 位置 | 用途 |
-|------|------|------|
-| Entity | `domain/*/entity/` | 领域实体，核心业务模型 |
-| Value Object | `domain/*/value_object.dart` | 带验证逻辑的值类型 |
-| DTO | `infrastructure/remote_data/api/*/models/dto.dart` | 请求体（发给服务端） |
-| VO | `infrastructure/remote_data/api/*/models/vo.dart` | 响应体（来自服务端），含 `toDomain` 转换 |
+| 类型 | 后缀 | 位置 | 文件命名 | 用途 |
+|------|------|------|----------|------|
+| Entity | 无 | `domain/*/entity/` | `user.dart` | 领域实体，核心业务模型 |
+| Value Object | 无 | `domain/*/value_object.dart` | `value_object.dart` | 带验证逻辑的值类型 |
+| Param | `XxxParam` | `domain/*/models/` | `login_param.dart` | Repository / UseCase 的入参 |
+| DTO | `XxxDto` | `infrastructure/.../models/` | `login_dto.dart` | 请求体（发给服务端） |
+| Model | `XxxModel` | `infrastructure/.../models/` | `user_model.dart` | 响应体（来自服务端），含 `toDomain` 转换 |
+
+**数据流转示例：**
+
+```
+Presentation                Domain                    Infrastructure
+                            LoginParam ──→ Repo ──→ LoginDto（转成接口格式）
+                            AuthResult ←── Repo ←── UserModel.toDomain（转回领域模型）
+```
 
 ### 环境切换
 

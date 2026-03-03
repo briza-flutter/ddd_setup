@@ -1,4 +1,4 @@
-import 'package:ddd_setup/domain/auth/models/auth_data.dart';
+import 'package:ddd_setup/domain/auth/models/login_param.dart';
 import 'package:ddd_setup/domain/auth/models/auth_result.dart';
 import 'package:ddd_setup/domain/auth/repositories/auth_repo.dart';
 import 'package:ddd_setup/domain/auth/repositories/local_auth_storage.dart';
@@ -10,8 +10,8 @@ class AuthUseCase {
   final LocalAuthStorage _localAuthStorage;
   AuthUseCase(this._authRepo, this._localAuthStorage);
 
-  Future<AuthResult> login(LoginData loginData) async {
-    final r = await _authRepo.login(loginData);
+  Future<AuthResult> login(LoginParam param) async {
+    final r = await _authRepo.login(param);
     await _localAuthStorage.setToken(r.token);
     await _localAuthStorage.setUser(r.user);
     return r;

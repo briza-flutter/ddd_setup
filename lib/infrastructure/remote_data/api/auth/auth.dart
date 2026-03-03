@@ -1,7 +1,7 @@
 import 'package:ddd_setup/common/utils/map_utils.dart';
 import 'package:ddd_setup/domain/auth/models/auth_result.dart';
 import 'package:ddd_setup/domain/user/entity/user.dart';
-import 'package:ddd_setup/infrastructure/remote_data/api/auth/models/dto.dart';
+import 'package:ddd_setup/infrastructure/remote_data/api/auth/models/login_dto.dart';
 import 'package:ddd_setup/infrastructure/remote_data/http_client/dio_client.dart';
 import 'package:injectable/injectable.dart';
 

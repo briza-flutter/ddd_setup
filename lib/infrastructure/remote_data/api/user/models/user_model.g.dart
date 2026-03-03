@@ -1,17 +1,18 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'vo.dart';
+part of 'user_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_UserVo _$UserVoFromJson(Map<String, dynamic> json) => _UserVo(
+_UserModel _$UserModelFromJson(Map<String, dynamic> json) => _UserModel(
       name: json['name'] as String,
       id: (json['id'] as num).toInt(),
     );
 
-Map<String, dynamic> _$UserVoToJson(_UserVo instance) => <String, dynamic>{
+Map<String, dynamic> _$UserModelToJson(_UserModel instance) =>
+    <String, dynamic>{
       'name': instance.name,
       'id': instance.id,
     };

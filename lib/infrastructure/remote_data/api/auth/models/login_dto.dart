@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'dto.freezed.dart';
-part 'dto.g.dart';
+part 'login_dto.freezed.dart';
+part 'login_dto.g.dart';
 
 @freezed
 abstract class LoginDto with _$LoginDto {

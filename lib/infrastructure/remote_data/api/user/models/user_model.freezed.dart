@@ -4,7 +4,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'vo.dart';
+part of 'user_model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,25 +14,25 @@ part of 'vo.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$UserVo {
+mixin _$UserModel {
   String get name;
   int get id;
 
-  /// Create a copy of UserVo
+  /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $UserVoCopyWith<UserVo> get copyWith =>
-      _$UserVoCopyWithImpl<UserVo>(this as UserVo, _$identity);
+  $UserModelCopyWith<UserModel> get copyWith =>
+      _$UserModelCopyWithImpl<UserModel>(this as UserModel, _$identity);
 
-  /// Serializes this UserVo to a JSON map.
+  /// Serializes this UserModel to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is UserVo &&
+            other is UserModel &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.id, id) || other.id == id));
   }
@@ -43,26 +43,26 @@ mixin _$UserVo {
 
   @override
   String toString() {
-    return 'UserVo(name: $name, id: $id)';
+    return 'UserModel(name: $name, id: $id)';
   }
 }
 
 /// @nodoc
-abstract mixin class $UserVoCopyWith<$Res> {
-  factory $UserVoCopyWith(UserVo value, $Res Function(UserVo) _then) =
-      _$UserVoCopyWithImpl;
+abstract mixin class $UserModelCopyWith<$Res> {
+  factory $UserModelCopyWith(UserModel value, $Res Function(UserModel) _then) =
+      _$UserModelCopyWithImpl;
   @useResult
   $Res call({String name, int id});
 }
 
 /// @nodoc
-class _$UserVoCopyWithImpl<$Res> implements $UserVoCopyWith<$Res> {
-  _$UserVoCopyWithImpl(this._self, this._then);
+class _$UserModelCopyWithImpl<$Res> implements $UserModelCopyWith<$Res> {
+  _$UserModelCopyWithImpl(this._self, this._then);
 
-  final UserVo _self;
-  final $Res Function(UserVo) _then;
+  final UserModel _self;
+  final $Res Function(UserModel) _then;
 
-  /// Create a copy of UserVo
+  /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -85,26 +85,27 @@ class _$UserVoCopyWithImpl<$Res> implements $UserVoCopyWith<$Res> {
 
 /// @nodoc
 @JsonSerializable()
-class _UserVo extends UserVo {
-  _UserVo({required this.name, required this.id}) : super._();
-  factory _UserVo.fromJson(Map<String, dynamic> json) => _$UserVoFromJson(json);
+class _UserModel extends UserModel {
+  _UserModel({required this.name, required this.id}) : super._();
+  factory _UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
 
   @override
   final String name;
   @override
   final int id;
 
-  /// Create a copy of UserVo
+  /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$UserVoCopyWith<_UserVo> get copyWith =>
-      __$UserVoCopyWithImpl<_UserVo>(this, _$identity);
+  _$UserModelCopyWith<_UserModel> get copyWith =>
+      __$UserModelCopyWithImpl<_UserModel>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$UserVoToJson(
+    return _$UserModelToJson(
       this,
     );
   }
@@ -113,7 +114,7 @@ class _UserVo extends UserVo {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _UserVo &&
+            other is _UserModel &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.id, id) || other.id == id));
   }
@@ -124,27 +125,29 @@ class _UserVo extends UserVo {
 
   @override
   String toString() {
-    return 'UserVo(name: $name, id: $id)';
+    return 'UserModel(name: $name, id: $id)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$UserVoCopyWith<$Res> implements $UserVoCopyWith<$Res> {
-  factory _$UserVoCopyWith(_UserVo value, $Res Function(_UserVo) _then) =
-      __$UserVoCopyWithImpl;
+abstract mixin class _$UserModelCopyWith<$Res>
+    implements $UserModelCopyWith<$Res> {
+  factory _$UserModelCopyWith(
+          _UserModel value, $Res Function(_UserModel) _then) =
+      __$UserModelCopyWithImpl;
   @override
   @useResult
   $Res call({String name, int id});
 }
 
 /// @nodoc
-class __$UserVoCopyWithImpl<$Res> implements _$UserVoCopyWith<$Res> {
-  __$UserVoCopyWithImpl(this._self, this._then);
+class __$UserModelCopyWithImpl<$Res> implements _$UserModelCopyWith<$Res> {
+  __$UserModelCopyWithImpl(this._self, this._then);
 
-  final _UserVo _self;
-  final $Res Function(_UserVo) _then;
+  final _UserModel _self;
+  final $Res Function(_UserModel) _then;
 
-  /// Create a copy of UserVo
+  /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -152,7 +155,7 @@ class __$UserVoCopyWithImpl<$Res> implements _$UserVoCopyWith<$Res> {
     Object? name = null,
     Object? id = null,
   }) {
-    return _then(_UserVo(
+    return _then(_UserModel(
       name: null == name
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable

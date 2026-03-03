@@ -23,7 +23,7 @@ Map<String, dynamic> _$UserStoreToJson(_UserStore instance) =>
 // RiverpodGenerator
 // **************************************************************************
 
-String _$userVmHash() => r'c3e0614b8056b5b31cfc81c9c0a182630c9939d3';
+String _$userVmHash() => r'1665ccea7829526dde3a56eede7e5808134959a6';
 
 /// See also [UserVm].
 @ProviderFor(UserVm)
