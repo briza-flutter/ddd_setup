@@ -15,7 +15,7 @@ Map<String, dynamic> _$RootVmStoreToJson(_RootVmStore instance) =>
 // RiverpodGenerator
 // **************************************************************************
 
-String _$rootVmHash() => r'9c88ef33bf05a4a9c07cc61b04c298cd452fc96d';
+String _$rootVmHash() => r'8490435b0698216b6885fa417338c186ab31ad44';
 
 /// See also [RootVm].
 @ProviderFor(RootVm)

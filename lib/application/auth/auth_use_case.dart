@@ -4,7 +4,7 @@ import 'package:ddd_setup/domain/auth/repositories/auth_repo.dart';
 import 'package:ddd_setup/domain/auth/repositories/local_auth_storage.dart';
 import 'package:injectable/injectable.dart';
 
-@injectable
+@singleton
 class AuthUseCase {
   final AuthRepo _authRepo;
   final LocalAuthStorage _localAuthStorage;

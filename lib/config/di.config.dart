@@ -47,12 +47,14 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
     );
     gh.singleton<_i114.AppLogger>(() => _i114.AppLogger());
-    gh.factory<_i308.LocalAuthStorage>(
+    gh.singleton<_i308.LocalAuthStorage>(
         () => _i790.LocalAuthStorageImpl(gh<_i460.SharedPreferences>()));
     gh.singleton<_i952.RouterAuthProvider>(
         () => _i952.RouterAuthProvider(gh<_i308.LocalAuthStorage>()));
-    gh.singleton<_i431.DioInterceptorHandler>(
-        () => _i431.DioInterceptorHandler(gh<_i308.LocalAuthStorage>()));
+    gh.singleton<_i431.DioInterceptorHandler>(() => _i431.DioInterceptorHandler(
+          gh<_i308.LocalAuthStorage>(),
+          gh<_i952.RouterAuthProvider>(),
+        ));
     gh.singleton<_i952.AppRouterConfig>(() => _i952.AppRouterConfig(
           gh<_i114.AppLogger>(),
           gh<_i952.RouterAuthProvider>(),
@@ -61,11 +63,11 @@ extension GetItInjectableX on _i174.GetIt {
         () => registerModule.baseDio(gh<_i431.DioInterceptorHandler>()));
     gh.singleton<_i451.AuthApi>(() => _i451.AuthApi(gh<_i118.DioClient>()));
     gh.singleton<_i640.UserApi>(() => _i640.UserApi(gh<_i118.DioClient>()));
-    gh.factory<_i270.UserRepo>(() => _i921.UserRepoImpl(gh<_i640.UserApi>()));
+    gh.singleton<_i270.UserRepo>(() => _i921.UserRepoImpl(gh<_i640.UserApi>()));
     gh.factory<_i401.UserUseCase>(
         () => _i401.UserUseCase(gh<_i270.UserRepo>()));
-    gh.factory<_i64.AuthRepo>(() => _i739.AuthRepoImpl(gh<_i451.AuthApi>()));
-    gh.factory<_i520.AuthUseCase>(() => _i520.AuthUseCase(
+    gh.singleton<_i64.AuthRepo>(() => _i739.AuthRepoImpl(gh<_i451.AuthApi>()));
+    gh.singleton<_i520.AuthUseCase>(() => _i520.AuthUseCase(
           gh<_i64.AuthRepo>(),
           gh<_i308.LocalAuthStorage>(),
         ));

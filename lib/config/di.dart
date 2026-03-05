@@ -32,7 +32,6 @@ abstract class RegisterModule {
   @singleton
   DioClient baseDio(DioInterceptorHandler errHandler) {
     return DioClient(baseUrl: EnvConfig.baseUrl, interceptors: [
-      LogInterceptor(),
       AuthInterceptor(getToken: errHandler.getToken),
       ResponseInterceptor(),
       ErrInterceptor(onErrorCallback: errHandler.handleErr),

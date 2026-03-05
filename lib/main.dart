@@ -5,6 +5,7 @@ import 'package:ddd_setup/i18/generated/l10n.dart';
 import 'package:ddd_setup/presentation/provider/user_provider.dart';
 import 'package:ddd_setup/presentation/router/router_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
@@ -33,8 +34,15 @@ class MyApp extends ConsumerWidget {
     final routerConfig = di.get<AppRouterConfig>();
     return MaterialApp.router(
       title: 'Flutter Demo',
+      locale: const Locale('zh', 'CN'),
+      supportedLocales: [const Locale('zh', 'CN')],
       routerConfig: routerConfig.router,
-      localizationsDelegates: [S.delegate],
+      localizationsDelegates: [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       builder: BotToastInit(),
     );
   }

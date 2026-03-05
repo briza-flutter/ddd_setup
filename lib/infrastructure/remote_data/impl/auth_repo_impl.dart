@@ -5,7 +5,7 @@ import 'package:ddd_setup/infrastructure/remote_data/api/auth/auth.dart';
 import 'package:ddd_setup/infrastructure/remote_data/api/auth/models/login_dto.dart';
 import 'package:injectable/injectable.dart';
 
-@Injectable(as: AuthRepo)
+@Singleton(as: AuthRepo)
 class AuthRepoImpl implements AuthRepo {
   final AuthApi _authApi;
   AuthRepoImpl(this._authApi);

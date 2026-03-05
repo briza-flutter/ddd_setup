@@ -20,4 +20,8 @@ class RootVm extends _$RootVm {
     ref.read(userVmProvider.notifier).updateUserInfo();
     return const RootVmStore();
   }
+
+  Future signOut() async {
+    await ref.read(userVmProvider.notifier).logout();
+  }
 }

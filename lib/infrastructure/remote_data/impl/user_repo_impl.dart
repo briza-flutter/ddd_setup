@@ -3,7 +3,7 @@ import 'package:ddd_setup/domain/user/repositories/user_repo.dart';
 import 'package:ddd_setup/infrastructure/remote_data/api/user/user.dart';
 import 'package:injectable/injectable.dart';
 
-@Injectable(as: UserRepo)
+@Singleton(as: UserRepo)
 class UserRepoImpl implements UserRepo {
   final UserApi _userApi;
   UserRepoImpl(this._userApi);

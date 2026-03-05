@@ -4,7 +4,8 @@ class DioClient {
   late final Dio _dio;
   final List<Interceptor> interceptors = [];
   DioClient({List<Interceptor>? interceptors, required String baseUrl}) {
-    _dio = Dio()..options.baseUrl = baseUrl;
+    _dio = Dio(BaseOptions(
+        baseUrl: baseUrl, connectTimeout: const Duration(seconds: 8)));
     if (interceptors != null) {
       _dio.interceptors.addAll(interceptors);
     }

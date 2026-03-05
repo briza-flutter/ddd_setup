@@ -5,7 +5,7 @@ import 'package:ddd_setup/domain/user/entity/user.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-@Injectable(as: LocalAuthStorage)
+@Singleton(as: LocalAuthStorage)
 class LocalAuthStorageImpl implements LocalAuthStorage {
   final SharedPreferences _sp;
   LocalAuthStorageImpl(this._sp);

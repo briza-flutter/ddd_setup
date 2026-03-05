@@ -7,10 +7,18 @@ class RootPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(rootVmProvider);
+    final vm = ref.watch(rootVmProvider.notifier);
     return Scaffold(
       appBar: AppBar(
         title: const Text('root_page'),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            Text('root_page'),
+            ElevatedButton(onPressed: vm.signOut, child: Text('Sign Out'))
+          ],
+        ),
       ),
     );
   }

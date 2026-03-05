@@ -18,18 +18,24 @@ class AppRouterConfig {
   static final List<String> noAuthRoutes = [Routes.login];
 
   late final _router = GoRouter(
+    refreshListenable: _authProvider.refreshListenable,
     navigatorKey: rootRouterKey,
     initialLocation: Routes.login,
     observers: [BotToastNavigatorObserver()],
     routes: Routes.appRoutes,
     redirect: (context, state) {
+      _logger.d('Router redirect called with path: ${state.uri.path}');
+
+      /// 白名单 直接放行
       if (noAuthRoutes.contains(state.uri.path)) {
         return null;
       }
+
+      /// 没权限访问的路由，重定向到登录页
       final r = _authProvider.getAuth();
-      _logger.d("Redirecting to ${state.uri} : $r");
-      if (r) return null;
-      return Routes.login;
+      if (!r) return Routes.login;
+
+      return null;
     },
   );
 
@@ -38,6 +44,7 @@ class AppRouterConfig {
 
 @singleton
 class RouterAuthProvider {
+  final RouterAuthRefresh refreshListenable = RouterAuthRefresh();
   final LocalAuthStorage _spUtils;
   RouterAuthProvider(this._spUtils);
   bool getAuth() {
@@ -46,5 +53,11 @@ class RouterAuthProvider {
       return true;
     }
     return false;
+  }
+}
+
+class RouterAuthRefresh extends ChangeNotifier {
+  void refresh() {
+    notifyListeners();
   }
 }

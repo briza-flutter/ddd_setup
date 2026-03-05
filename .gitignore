@@ -46,3 +46,7 @@ app.*.map.json
 
 .vscode
 .claude
+env/prod.json
+
+# FVM Version Cache
+.fvm/
