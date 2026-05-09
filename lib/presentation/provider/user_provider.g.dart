@@ -3,27 +3,10 @@
 part of 'user_provider.dart';
 
 // **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
-
-_UserStore _$UserStoreFromJson(Map<String, dynamic> json) => _UserStore(
-      user: json['user'] == null
-          ? null
-          : User.fromJson(json['user'] as Map<String, dynamic>),
-      token: json['token'] as String?,
-    );
-
-Map<String, dynamic> _$UserStoreToJson(_UserStore instance) =>
-    <String, dynamic>{
-      'user': instance.user,
-      'token': instance.token,
-    };
-
-// **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$userVmHash() => r'18781c34d4a8177f752b9b706950aa062e8b3568';
+String _$userVmHash() => r'560d5a4b8ada0e651793819160b1269a03febc71';
 
 /// See also [UserVm].
 @ProviderFor(UserVm)

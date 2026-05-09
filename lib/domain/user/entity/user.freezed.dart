@@ -26,9 +26,6 @@ mixin _$User {
   $UserCopyWith<User> get copyWith =>
       _$UserCopyWithImpl<User>(this as User, _$identity);
 
-  /// Serializes this User to a JSON map.
-  Map<String, dynamic> toJson();
-
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
@@ -39,7 +36,6 @@ mixin _$User {
             (identical(other.type, type) || other.type == type));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, type);
 
@@ -91,10 +87,9 @@ class _$UserCopyWithImpl<$Res> implements $UserCopyWith<$Res> {
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _User implements User {
   _User({required this.id, required this.name, required this.type});
-  factory _User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   @override
   final int id;
@@ -112,13 +107,6 @@ class _User implements User {
       __$UserCopyWithImpl<_User>(this, _$identity);
 
   @override
-  Map<String, dynamic> toJson() {
-    return _$UserToJson(
-      this,
-    );
-  }
-
-  @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
@@ -128,7 +116,6 @@ class _User implements User {
             (identical(other.type, type) || other.type == type));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, type);
 

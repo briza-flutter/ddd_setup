@@ -17,6 +17,7 @@ T _$identity<T>(T value) => value;
 mixin _$UserModel {
   String get name;
   int get id;
+  int get type;
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
@@ -34,16 +35,17 @@ mixin _$UserModel {
         (other.runtimeType == runtimeType &&
             other is UserModel &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.id, id) || other.id == id));
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.type, type) || other.type == type));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, name, id);
+  int get hashCode => Object.hash(runtimeType, name, id, type);
 
   @override
   String toString() {
-    return 'UserModel(name: $name, id: $id)';
+    return 'UserModel(name: $name, id: $id, type: $type)';
   }
 }
 
@@ -52,7 +54,7 @@ abstract mixin class $UserModelCopyWith<$Res> {
   factory $UserModelCopyWith(UserModel value, $Res Function(UserModel) _then) =
       _$UserModelCopyWithImpl;
   @useResult
-  $Res call({String name, int id});
+  $Res call({String name, int id, int type});
 }
 
 /// @nodoc
@@ -69,6 +71,7 @@ class _$UserModelCopyWithImpl<$Res> implements $UserModelCopyWith<$Res> {
   $Res call({
     Object? name = null,
     Object? id = null,
+    Object? type = null,
   }) {
     return _then(_self.copyWith(
       name: null == name
@@ -79,6 +82,10 @@ class _$UserModelCopyWithImpl<$Res> implements $UserModelCopyWith<$Res> {
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
+      type: null == type
+          ? _self.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -86,7 +93,7 @@ class _$UserModelCopyWithImpl<$Res> implements $UserModelCopyWith<$Res> {
 /// @nodoc
 @JsonSerializable()
 class _UserModel extends UserModel {
-  _UserModel({required this.name, required this.id}) : super._();
+  _UserModel({required this.name, required this.id, this.type = 1}) : super._();
   factory _UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
 
@@ -94,6 +101,9 @@ class _UserModel extends UserModel {
   final String name;
   @override
   final int id;
+  @override
+  @JsonKey()
+  final int type;
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
@@ -116,16 +126,17 @@ class _UserModel extends UserModel {
         (other.runtimeType == runtimeType &&
             other is _UserModel &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.id, id) || other.id == id));
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.type, type) || other.type == type));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, name, id);
+  int get hashCode => Object.hash(runtimeType, name, id, type);
 
   @override
   String toString() {
-    return 'UserModel(name: $name, id: $id)';
+    return 'UserModel(name: $name, id: $id, type: $type)';
   }
 }
 
@@ -137,7 +148,7 @@ abstract mixin class _$UserModelCopyWith<$Res>
       __$UserModelCopyWithImpl;
   @override
   @useResult
-  $Res call({String name, int id});
+  $Res call({String name, int id, int type});
 }
 
 /// @nodoc
@@ -154,6 +165,7 @@ class __$UserModelCopyWithImpl<$Res> implements _$UserModelCopyWith<$Res> {
   $Res call({
     Object? name = null,
     Object? id = null,
+    Object? type = null,
   }) {
     return _then(_UserModel(
       name: null == name
@@ -163,6 +175,10 @@ class __$UserModelCopyWithImpl<$Res> implements _$UserModelCopyWith<$Res> {
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      type: null == type
+          ? _self.type
+          : type // ignore: cast_nullable_to_non_nullable
               as int,
     ));
   }

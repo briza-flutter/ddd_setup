@@ -9,6 +9,7 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:flutter_riverpod/flutter_riverpod.dart' as _i729;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
@@ -47,20 +48,18 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
     );
     gh.singleton<_i114.AppLogger>(() => _i114.AppLogger());
-    gh.singleton<_i308.LocalAuthStorage>(
-        () => _i790.LocalAuthStorageImpl(gh<_i460.SharedPreferences>()));
-    gh.singleton<_i952.RouterAuthProvider>(
-        () => _i952.RouterAuthProvider(gh<_i308.LocalAuthStorage>()));
-    gh.singleton<_i431.DioInterceptorHandler>(() => _i431.DioInterceptorHandler(
-          gh<_i308.LocalAuthStorage>(),
-          gh<_i952.RouterAuthProvider>(),
-        ));
-    gh.singleton<_i952.AppRouterConfig>(() => _i952.AppRouterConfig(
+    gh.singleton<_i431.DioInterceptorHandler>(
+        () => _i431.DioInterceptorHandler(gh<_i729.ProviderContainer>()));
+    gh.lazySingleton<_i952.AuthRouterListenable>(
+        () => _i952.AuthRouterListenable(gh<_i729.ProviderContainer>()));
+    gh.lazySingleton<_i952.AppRouterConfig>(() => _i952.AppRouterConfig(
           gh<_i114.AppLogger>(),
-          gh<_i952.RouterAuthProvider>(),
+          gh<_i952.AuthRouterListenable>(),
         ));
     gh.singleton<_i118.DioClient>(
         () => registerModule.baseDio(gh<_i431.DioInterceptorHandler>()));
+    gh.singleton<_i308.LocalAuthStorage>(
+        () => _i790.LocalAuthStorageImpl(gh<_i460.SharedPreferences>()));
     gh.singleton<_i451.AuthApi>(() => _i451.AuthApi(gh<_i118.DioClient>()));
     gh.singleton<_i640.UserApi>(() => _i640.UserApi(gh<_i118.DioClient>()));
     gh.singleton<_i270.UserRepo>(() => _i921.UserRepoImpl(gh<_i640.UserApi>()));

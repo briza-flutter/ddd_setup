@@ -1,10 +1,14 @@
 import 'package:ddd_setup/domain/user/entity/user.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'auth_result.freezed.dart';
 
 typedef Token = String;
 
-class AuthResult {
-  final User user;
-  final Token token;
-
-  const AuthResult({required this.user, required this.token});
+@freezed
+abstract class AuthResult with _$AuthResult {
+  const factory AuthResult({
+    required User user,
+    required Token token,
+  }) = _AuthResult;
 }

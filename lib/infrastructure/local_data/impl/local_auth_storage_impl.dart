@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ddd_setup/domain/auth/repositories/local_auth_storage.dart';
 import 'package:ddd_setup/domain/user/entity/user.dart';
+import 'package:ddd_setup/infrastructure/remote_data/api/user/models/user_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,12 +27,14 @@ class LocalAuthStorageImpl implements LocalAuthStorage {
   User? getUser() {
     final json = _sp.getString(_userKey);
     if (json == null) return null;
-    return User.fromJson(jsonDecode(json));
+    return UserModel.fromJson(jsonDecode(json)).toDomain;
   }
 
   @override
-  Future<bool> setUser(User user) =>
-      _sp.setString(_userKey, jsonEncode(user.toJson()));
+  Future<bool> setUser(User user) => _sp.setString(
+        _userKey,
+        jsonEncode(UserModel.fromDomain(user).toJson()),
+      );
 
   @override
   Future<bool> clearUser() => _sp.remove(_userKey);

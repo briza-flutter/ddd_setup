@@ -4,7 +4,6 @@ import 'package:ddd_setup/infrastructure/remote_data/http_client/dio_client.dart
 import 'package:ddd_setup/infrastructure/remote_data/http_client/interceptors/auth_interceptor.dart';
 import 'package:ddd_setup/infrastructure/remote_data/http_client/interceptors/error_interceptor.dart';
 import 'package:ddd_setup/infrastructure/remote_data/http_client/interceptors/response_interceptor.dart';
-import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';

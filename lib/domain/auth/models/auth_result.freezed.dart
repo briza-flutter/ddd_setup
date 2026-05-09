@@ -4,7 +4,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'user_provider.dart';
+part of 'auth_result.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,22 +14,22 @@ part of 'user_provider.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$UserStore {
-  User? get user;
-  Token? get token;
+mixin _$AuthResult {
+  User get user;
+  Token get token;
 
-  /// Create a copy of UserStore
+  /// Create a copy of AuthResult
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $UserStoreCopyWith<UserStore> get copyWith =>
-      _$UserStoreCopyWithImpl<UserStore>(this as UserStore, _$identity);
+  $AuthResultCopyWith<AuthResult> get copyWith =>
+      _$AuthResultCopyWithImpl<AuthResult>(this as AuthResult, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is UserStore &&
+            other is AuthResult &&
             (identical(other.user, user) || other.user == user) &&
             (identical(other.token, token) || other.token == token));
   }
@@ -39,57 +39,54 @@ mixin _$UserStore {
 
   @override
   String toString() {
-    return 'UserStore(user: $user, token: $token)';
+    return 'AuthResult(user: $user, token: $token)';
   }
 }
 
 /// @nodoc
-abstract mixin class $UserStoreCopyWith<$Res> {
-  factory $UserStoreCopyWith(UserStore value, $Res Function(UserStore) _then) =
-      _$UserStoreCopyWithImpl;
+abstract mixin class $AuthResultCopyWith<$Res> {
+  factory $AuthResultCopyWith(
+          AuthResult value, $Res Function(AuthResult) _then) =
+      _$AuthResultCopyWithImpl;
   @useResult
-  $Res call({User? user, Token? token});
+  $Res call({User user, Token token});
 
-  $UserCopyWith<$Res>? get user;
+  $UserCopyWith<$Res> get user;
 }
 
 /// @nodoc
-class _$UserStoreCopyWithImpl<$Res> implements $UserStoreCopyWith<$Res> {
-  _$UserStoreCopyWithImpl(this._self, this._then);
+class _$AuthResultCopyWithImpl<$Res> implements $AuthResultCopyWith<$Res> {
+  _$AuthResultCopyWithImpl(this._self, this._then);
 
-  final UserStore _self;
-  final $Res Function(UserStore) _then;
+  final AuthResult _self;
+  final $Res Function(AuthResult) _then;
 
-  /// Create a copy of UserStore
+  /// Create a copy of AuthResult
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? user = freezed,
-    Object? token = freezed,
+    Object? user = null,
+    Object? token = null,
   }) {
     return _then(_self.copyWith(
-      user: freezed == user
+      user: null == user
           ? _self.user
           : user // ignore: cast_nullable_to_non_nullable
-              as User?,
-      token: freezed == token
+              as User,
+      token: null == token
           ? _self.token
           : token // ignore: cast_nullable_to_non_nullable
-              as Token?,
+              as Token,
     ));
   }
 
-  /// Create a copy of UserStore
+  /// Create a copy of AuthResult
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $UserCopyWith<$Res>? get user {
-    if (_self.user == null) {
-      return null;
-    }
-
-    return $UserCopyWith<$Res>(_self.user!, (value) {
+  $UserCopyWith<$Res> get user {
+    return $UserCopyWith<$Res>(_self.user, (value) {
       return _then(_self.copyWith(user: value));
     });
   }
@@ -97,27 +94,27 @@ class _$UserStoreCopyWithImpl<$Res> implements $UserStoreCopyWith<$Res> {
 
 /// @nodoc
 
-class _UserStore implements UserStore {
-  _UserStore({required this.user, required this.token});
+class _AuthResult implements AuthResult {
+  const _AuthResult({required this.user, required this.token});
 
   @override
-  final User? user;
+  final User user;
   @override
-  final Token? token;
+  final Token token;
 
-  /// Create a copy of UserStore
+  /// Create a copy of AuthResult
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$UserStoreCopyWith<_UserStore> get copyWith =>
-      __$UserStoreCopyWithImpl<_UserStore>(this, _$identity);
+  _$AuthResultCopyWith<_AuthResult> get copyWith =>
+      __$AuthResultCopyWithImpl<_AuthResult>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _UserStore &&
+            other is _AuthResult &&
             (identical(other.user, user) || other.user == user) &&
             (identical(other.token, token) || other.token == token));
   }
@@ -127,61 +124,57 @@ class _UserStore implements UserStore {
 
   @override
   String toString() {
-    return 'UserStore(user: $user, token: $token)';
+    return 'AuthResult(user: $user, token: $token)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$UserStoreCopyWith<$Res>
-    implements $UserStoreCopyWith<$Res> {
-  factory _$UserStoreCopyWith(
-          _UserStore value, $Res Function(_UserStore) _then) =
-      __$UserStoreCopyWithImpl;
+abstract mixin class _$AuthResultCopyWith<$Res>
+    implements $AuthResultCopyWith<$Res> {
+  factory _$AuthResultCopyWith(
+          _AuthResult value, $Res Function(_AuthResult) _then) =
+      __$AuthResultCopyWithImpl;
   @override
   @useResult
-  $Res call({User? user, Token? token});
+  $Res call({User user, Token token});
 
   @override
-  $UserCopyWith<$Res>? get user;
+  $UserCopyWith<$Res> get user;
 }
 
 /// @nodoc
-class __$UserStoreCopyWithImpl<$Res> implements _$UserStoreCopyWith<$Res> {
-  __$UserStoreCopyWithImpl(this._self, this._then);
+class __$AuthResultCopyWithImpl<$Res> implements _$AuthResultCopyWith<$Res> {
+  __$AuthResultCopyWithImpl(this._self, this._then);
 
-  final _UserStore _self;
-  final $Res Function(_UserStore) _then;
+  final _AuthResult _self;
+  final $Res Function(_AuthResult) _then;
 
-  /// Create a copy of UserStore
+  /// Create a copy of AuthResult
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? user = freezed,
-    Object? token = freezed,
+    Object? user = null,
+    Object? token = null,
   }) {
-    return _then(_UserStore(
-      user: freezed == user
+    return _then(_AuthResult(
+      user: null == user
           ? _self.user
           : user // ignore: cast_nullable_to_non_nullable
-              as User?,
-      token: freezed == token
+              as User,
+      token: null == token
           ? _self.token
           : token // ignore: cast_nullable_to_non_nullable
-              as Token?,
+              as Token,
     ));
   }
 
-  /// Create a copy of UserStore
+  /// Create a copy of AuthResult
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $UserCopyWith<$Res>? get user {
-    if (_self.user == null) {
-      return null;
-    }
-
-    return $UserCopyWith<$Res>(_self.user!, (value) {
+  $UserCopyWith<$Res> get user {
+    return $UserCopyWith<$Res>(_self.user, (value) {
       return _then(_self.copyWith(user: value));
     });
   }

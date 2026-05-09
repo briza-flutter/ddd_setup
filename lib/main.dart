@@ -14,23 +14,30 @@ void main() async {
   /// 环境变量读取
   await EnvConfig.init();
 
+  /// 手动创建 ProviderContainer，并注册到 DI，
+  /// 让路由 / 拦截器等非 widget 层也能读取/写入 Riverpod 状态。
+  final container = ProviderContainer();
+  di.registerSingleton<ProviderContainer>(container);
+
   /// 依赖注入配置
   await configureDependencies();
 
-  runApp(ProviderScope(child: const MyApp()));
+  runApp(
+    UncontrolledProviderScope(
+      container: container,
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
-  _initProviders(WidgetRef ref) {
-    ref.read(userVmProvider);
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    /// 初始化全局 provider
-    _initProviders(ref);
+    /// 提前订阅，确保 UserVm 在首帧前完成本地认证态恢复，
+    /// 同时触发 AuthRouterListenable 开始监听。
+    ref.watch(userVmProvider);
     final routerConfig = di.get<AppRouterConfig>();
     return MaterialApp.router(
       title: 'Flutter Demo',

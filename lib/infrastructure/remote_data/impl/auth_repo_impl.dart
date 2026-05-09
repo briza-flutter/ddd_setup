@@ -9,6 +9,7 @@ import 'package:injectable/injectable.dart';
 class AuthRepoImpl implements AuthRepo {
   final AuthApi _authApi;
   AuthRepoImpl(this._authApi);
+
   @override
   Future deleteAccount() {
     throw UnimplementedError();
@@ -16,8 +17,10 @@ class AuthRepoImpl implements AuthRepo {
 
   @override
   Future<AuthResult> login(LoginParam param) async {
-    final r = await _authApi.login(LoginDto(
-        username: param.phoneNumber.value, password: param.password.value));
-    return AuthResult(user: r.$1, token: r.$2);
+    final model = await _authApi.login(LoginDto(
+      username: param.phoneNumber.value,
+      password: param.password.value,
+    ));
+    return model.toDomain;
   }
 }

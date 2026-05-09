@@ -130,10 +130,10 @@ Presentation → Application → Domain ← Infrastructure
 
 ```dart
 // lib/domain/order/entity/order.dart
+// 纯领域实体，不感知任何序列化（无 fromJson/toJson）
 @freezed
 abstract class Order with _$Order {
   factory Order({required int id, required double amount}) = _Order;
-  factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 }
 
 // lib/domain/order/repositories/order_repo.dart
@@ -145,6 +145,20 @@ abstract class OrderRepo {
 **2. Infrastructure 层 — 实现接口**
 
 ```dart
+// lib/infrastructure/remote_data/api/order/models/order_model.dart
+// DTO 在 infra 层独立定义，承担 JSON 序列化职责
+@freezed
+abstract class OrderModel with _$OrderModel {
+  factory OrderModel({required int id, required double amount}) = _OrderModel;
+  factory OrderModel.fromJson(Map<String, dynamic> json) =>
+      _$OrderModelFromJson(json);
+  factory OrderModel.fromDomain(Order o) =>
+      OrderModel(id: o.id, amount: o.amount);
+
+  OrderModel._();
+  Order get toDomain => Order(id: id, amount: amount);
+}
+
 // lib/infrastructure/remote_data/api/order/order.dart
 @singleton
 class OrderApi {
@@ -154,14 +168,14 @@ class OrderApi {
 }
 
 // lib/infrastructure/remote_data/impl/order_repo_impl.dart
-@Injectable(as: OrderRepo)
+@Singleton(as: OrderRepo)
 class OrderRepoImpl implements OrderRepo {
   final OrderApi _orderApi;
   OrderRepoImpl(this._orderApi);
   @override
   Future<List<Order>> getOrders() async {
     final models = await _orderApi.getOrders();
-    return models.map((e) => e.toDomain).toList();
+    return models.map((e) => e.toDomain).toList();   // DTO → Domain 在边界处转换
   }
 }
 ```
@@ -209,16 +223,111 @@ dart run build_runner build --delete-conflicting-outputs
 | Entity | 无 | `domain/*/entity/` | `user.dart` | 领域实体，核心业务模型 |
 | Value Object | 无 | `domain/*/value_object.dart` | `value_object.dart` | 带验证逻辑的值类型 |
 | Param | `XxxParam` | `domain/*/models/` | `login_param.dart` | Repository / UseCase 的入参 |
+| Result | `XxxResult` | `domain/*/models/` | `auth_result.dart` | Repository / UseCase 的复合返回值 |
 | DTO | `XxxDto` | `infrastructure/.../models/` | `login_dto.dart` | 请求体（发给服务端） |
-| Model | `XxxModel` | `infrastructure/.../models/` | `user_model.dart` | 响应体（来自服务端），含 `toDomain` 转换 |
+| Model | `XxxModel` | `infrastructure/.../models/` | `user_model.dart` | 响应体（来自服务端），含 `toDomain` / `fromDomain` 转换 |
+| State | `XxxVmStore` / `XxxStore` | `presentation/.../` | `login_vm.dart` 内 | 页面/全局状态（freezed 不可变） |
 
-**数据流转示例：**
+### 入参 / 返回值规范
 
+> **核心原则：同一业务方法在 Repo / UseCase / VM 三层入参类型一致，不要在某一层拆成命名参数。**
+
+#### 入参
+
+| 字段数量 | 形态 | 形参变量名 | 示例 |
+|---|---|---|---|
+| 单个基础类型 | 直传 | 业务名 | `getUserInfo(int userId)` |
+| ≥2 个字段 / 含值对象 / 含复杂结构 | `XxxParam`（domain 层定义，freezed） | `param` | `login(LoginParam param)` |
+
+- **Repository、UseCase、VM 的同名方法保持入参类型一致**，VM 不要把 `Param` 拆成命名参数（避免每加一个字段就改三层签名）。
+- DTO 不暴露给 Repo/UseCase。Repo 实现层内部从 `Param` 构造 `Dto` 后传给 Api。
+- Api 层形参名用 `dto`（如 `login(LoginDto dto)`），不用 `loginDto` 这种"类型重复"的命名。
+- ValueObject 字段名直接用业务名，**不加 `Obj` 后缀**。`password` ✓ ，`passwordObj` ✗。
+
+#### 返回值
+
+| 场景 | 形态 | 示例 |
+|---|---|---|
+| 单值 | 直接返回领域类型 | `Future<User>` |
+| 多值且语义明确 | `XxxResult`（domain 层 freezed） | `Future<AuthResult>` |
+| 跨层 record | **禁止** | ~~`Future<(User, Token)>`~~ |
+
+- record 只允许在**单文件内部**短期使用，**不可跨层暴露**。
+- Api 层返回 `Model`（infra 类型），Repository 实现层负责 `model.toDomain` 转换为 Domain 实体或 `Result`。
+
+#### 三层调用示例（推荐写法）
+
+```dart
+// Domain
+@freezed
+abstract class LoginParam with _$LoginParam {
+  factory LoginParam({required PhoneNumber phoneNumber, required Password password})
+      = _LoginParam;
+}
+
+abstract class AuthRepo {
+  Future<AuthResult> login(LoginParam param);
+}
+
+// Application
+@singleton
+class AuthUseCase {
+  Future<AuthResult> login(LoginParam param) => _authRepo.login(param);
+}
+
+// Presentation
+@Riverpod(keepAlive: true)
+class UserVm extends _$UserVm {
+  Future<AuthResult> login(LoginParam param) async {           // ← 同一类型贯通
+    final res = await _authUseCase.login(param);
+    state = state.copyWith(user: res.user, token: res.token);
+    return res;
+  }
+}
+
+// Infrastructure（Repo 实现层做 Param → Dto 的边界转换）
+@Singleton(as: AuthRepo)
+class AuthRepoImpl implements AuthRepo {
+  @override
+  Future<AuthResult> login(LoginParam param) async {
+    final model = await _authApi.login(LoginDto(
+      username: param.phoneNumber.value,
+      password: param.password.value,
+    ));
+    return model.toDomain;                                      // ← Model → Result
+  }
+}
 ```
-Presentation                Domain                    Infrastructure
-                            LoginParam ──→ Repo ──→ LoginDto（转成接口格式）
-                            AuthResult ←── Repo ←── UserModel.toDomain（转回领域模型）
+
+### DI 注册：`@singleton` vs `@lazySingleton`
+
+> **凡是构造函数里访问 Riverpod / 链式触发其他 DI 依赖的类，必须用 `@lazySingleton`，而不是 `@singleton`。**
+
+**原因**：`@singleton` 在 `configureDependencies()` 内部被**急切构造**，构造顺序按依赖图拓扑排序。如果某个类的构造函数里有副作用（监听 Provider、读取其他 UseCase 等），可能踩到"被依赖项尚未注册"的窗口，抛 `StateError: Object/factory with type X is not registered inside GetIt`。
+
+`@lazySingleton` 把构造延迟到首次 `di.get<>()` 调用，那时 init 已全部完成，整条依赖链都可解析。
+
+**典型场景**（本模板中的 `AuthRouterListenable`）：
+
+```dart
+@lazySingleton  // ← 必须 lazy
+class AuthRouterListenable extends ChangeNotifier {
+  AuthRouterListenable(this._container) {
+    // 构造函数里立即订阅 Riverpod，会触发 UserVm.build → di.get<AuthUseCase>()
+    _container.listen<UserStore>(userVmProvider, ..., fireImmediately: true);
+  }
+}
 ```
+
+如果用 `@singleton`，DI init 阶段构造它时，`AuthUseCase`（拓扑排序在后）还没注册 → 报错。
+
+**判断标准**：
+
+| 用 `@singleton` | 用 `@lazySingleton` |
+|---|---|
+| 构造函数只赋值字段 | 构造函数有副作用（订阅、IO、调用其他 UseCase） |
+| 仅依赖已注册的早期对象 | 间接依赖晚期对象（通过 Riverpod / 回调等绕一圈） |
+| 启动期就需要存在（如 SharedPreferences） | 只在 UI/路由层第一次访问时才需要 |
 
 ### 环境切换
 

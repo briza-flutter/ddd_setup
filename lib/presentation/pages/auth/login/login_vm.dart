@@ -1,6 +1,5 @@
 import 'package:ddd_setup/common/presentation/extensions/future_extensions.dart';
-import 'package:ddd_setup/common/utils/app_logger.dart';
-import 'package:ddd_setup/config/di.dart';
+import 'package:ddd_setup/domain/auth/models/login_param.dart';
 import 'package:ddd_setup/domain/auth/value_object.dart';
 import 'package:ddd_setup/presentation/provider/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -21,46 +20,37 @@ abstract class LoginVmStore with _$LoginVmStore {
 @riverpod
 class LoginVm extends _$LoginVm {
   late final TextEditingController phoneController = TextEditingController();
-
   late final TextEditingController passwordController = TextEditingController();
-  final AppLogger _logger = di.get<AppLogger>();
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   @override
   LoginVmStore build() {
     return const LoginVmStore();
   }
 
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   Future<bool> login() async {
-    final r = formKey.currentState?.validate();
-    if (r != true) return false;
-    final phone = phoneController.text;
-    final password = passwordController.text;
-    final phoneNumber = PhoneNumber.create(phone).valueOrNull();
-    final passwordObj = Password.create(password).valueOrNull();
-    if (phoneNumber == null || passwordObj == null) {
-      return false;
-    }
-    _logger.d("Logging in with phone: $phone and password: $password");
+    if (formKey.currentState?.validate() != true) return false;
+    final phoneNumber = PhoneNumber.create(phoneController.text).valueOrNull();
+    final password = Password.create(passwordController.text).valueOrNull();
+    if (phoneNumber == null || password == null) return false;
+
     final (:data, :failure) = await ref
         .read(userVmProvider.notifier)
-        .login(phoneNumber: phoneNumber, passwordObj: passwordObj)
+        .login(LoginParam(phoneNumber: phoneNumber, password: password))
         .tryCatch(showLoading: true, showError: true);
     return failure == null;
   }
 
   String? validatePhone(String? value) {
-    final r = PhoneNumber.create(value ?? "");
-    final res = r.valueOrNull();
-    if (res == null) {
+    if (PhoneNumber.create(value ?? "").valueOrNull() == null) {
       return "Invalid phone number";
     }
     return null;
   }
 
   String? validatePassword(String? value) {
-    final r = Password.create(value ?? "");
-    final res = r.valueOrNull();
-    if (res == null) {
+    if (Password.create(value ?? "").valueOrNull() == null) {
       return "Invalid password";
     }
     return null;
