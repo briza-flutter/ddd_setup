@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:injectable/injectable.dart';
 
+/// 网络拦截器的项目级回调桥接：把 core 拦截器的回调钩到 auth feature 的 Riverpod 状态。
+/// 放 app/ 是因为它依赖具体的 auth feature，不可跨项目复用。
 @singleton
 class DioInterceptorHandler {
   final ProviderContainer _container;

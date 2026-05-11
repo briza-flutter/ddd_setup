@@ -1,6 +1,6 @@
 import 'package:ddd_setup/app/env_config.dart';
 import 'package:ddd_setup/core/network/dio_client.dart';
-import 'package:ddd_setup/core/network/interceptor_handler.dart';
+import 'package:ddd_setup/app/network/interceptor_handler.dart';
 import 'package:ddd_setup/core/network/interceptors/auth_interceptor.dart';
 import 'package:ddd_setup/core/network/interceptors/error_interceptor.dart';
 import 'package:ddd_setup/core/network/interceptors/response_interceptor.dart';
