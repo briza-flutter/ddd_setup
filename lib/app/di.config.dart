@@ -14,7 +14,9 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
+import '../core/database/sqlite_client.dart' as _i865;
 import '../core/network/dio_client.dart' as _i393;
+import '../core/storage/secure_storage.dart' as _i637;
 import '../core/utils/app_logger.dart' as _i769;
 import '../features/auth/data/datasource/auth_api.dart' as _i479;
 import '../features/auth/data/datasource/auth_local_storage.dart' as _i301;
@@ -42,6 +44,14 @@ extension GetItInjectableX on _i174.GetIt {
       () => registerModule.sp,
       preResolve: true,
     );
+    await gh.singletonAsync<_i637.SecureStorage>(
+      () => registerModule.secureStorage,
+      preResolve: true,
+    );
+    await gh.singletonAsync<_i865.SqliteClient>(
+      () => registerModule.sqlite(),
+      preResolve: true,
+    );
     gh.singleton<_i270.DioInterceptorHandler>(
         () => _i270.DioInterceptorHandler(gh<_i729.ProviderContainer>()));
     gh.lazySingleton<_i722.AuthRouterListenable>(
@@ -52,8 +62,10 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i769.AppLogger>(),
           gh<_i722.AuthRouterListenable>(),
         ));
-    gh.singleton<_i301.AuthLocalStorage>(
-        () => _i301.AuthLocalStorage(gh<_i460.SharedPreferences>()));
+    gh.singleton<_i301.AuthLocalStorage>(() => _i301.AuthLocalStorage(
+          gh<_i460.SharedPreferences>(),
+          gh<_i637.SecureStorage>(),
+        ));
     gh.singleton<_i479.AuthApi>(() => _i479.AuthApi(gh<_i393.DioClient>()));
     gh.singleton<_i588.UserApi>(() => _i588.UserApi(gh<_i393.DioClient>()));
     gh.singleton<_i570.AuthRepository>(() => _i570.AuthRepository(

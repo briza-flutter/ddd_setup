@@ -1,5 +1,5 @@
 // DO NOT EDIT. This is code generated via package:intl/generate_localized.dart
-// This is a library that provides messages for a zh locale. All the
+// This is a library that provides messages for a en locale. All the
 // messages from the main program should be duplicated here with the same
 // function name.
 
@@ -18,20 +18,24 @@ final messages = new MessageLookup();
 typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 
 class MessageLookup extends MessageLookupByLibrary {
-  String get localeName => 'zh';
+  String get localeName => 'en';
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "appTitle": MessageLookupByLibrary.simpleMessage("Flutter Demo"),
-    "homePageTitle": MessageLookupByLibrary.simpleMessage("首页"),
-    "invalidPassword": MessageLookupByLibrary.simpleMessage("密码至少 6 位"),
-    "invalidPhone": MessageLookupByLibrary.simpleMessage("手机号格式不正确"),
-    "loginButton": MessageLookupByLibrary.simpleMessage("登录"),
-    "loginPageTitle": MessageLookupByLibrary.simpleMessage("登录"),
-    "passwordHint": MessageLookupByLibrary.simpleMessage("密码"),
-    "phoneHint": MessageLookupByLibrary.simpleMessage("手机号"),
-    "signOutButton": MessageLookupByLibrary.simpleMessage("退出登录"),
-    "switchLanguage": MessageLookupByLibrary.simpleMessage("切换语言"),
-    "switchTheme": MessageLookupByLibrary.simpleMessage("切换主题"),
+    "homePageTitle": MessageLookupByLibrary.simpleMessage("Home"),
+    "invalidPassword": MessageLookupByLibrary.simpleMessage(
+      "Password must be at least 6 characters",
+    ),
+    "invalidPhone": MessageLookupByLibrary.simpleMessage(
+      "Invalid phone number",
+    ),
+    "loginButton": MessageLookupByLibrary.simpleMessage("Login"),
+    "loginPageTitle": MessageLookupByLibrary.simpleMessage("Login"),
+    "passwordHint": MessageLookupByLibrary.simpleMessage("Password"),
+    "phoneHint": MessageLookupByLibrary.simpleMessage("Phone number"),
+    "signOutButton": MessageLookupByLibrary.simpleMessage("Sign out"),
+    "switchLanguage": MessageLookupByLibrary.simpleMessage("Switch language"),
+    "switchTheme": MessageLookupByLibrary.simpleMessage("Switch theme"),
   };
 }

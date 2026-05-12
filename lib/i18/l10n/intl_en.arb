@@ -1,0 +1,13 @@
+{
+  "appTitle": "Flutter Demo",
+  "loginPageTitle": "Login",
+  "phoneHint": "Phone number",
+  "passwordHint": "Password",
+  "loginButton": "Login",
+  "homePageTitle": "Home",
+  "signOutButton": "Sign out",
+  "switchTheme": "Switch theme",
+  "switchLanguage": "Switch language",
+  "invalidPhone": "Invalid phone number",
+  "invalidPassword": "Password must be at least 6 characters"
+}

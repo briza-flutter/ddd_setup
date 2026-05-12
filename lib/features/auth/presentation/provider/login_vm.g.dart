@@ -16,7 +16,7 @@ Map<String, dynamic> _$LoginVmStoreToJson(_LoginVmStore instance) =>
 // RiverpodGenerator
 // **************************************************************************
 
-String _$loginVmHash() => r'1d80cd78c525a7d0c8c48d0423be42edc34dc1b5';
+String _$loginVmHash() => r'60eb4761f1a06230eb6f2c53dc9787aefb2928eb';
 
 /// See also [LoginVm].
 @ProviderFor(LoginVm)

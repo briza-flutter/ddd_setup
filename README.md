@@ -27,15 +27,21 @@ lib/
 │   ├── app.dart                              #   MyApp（MaterialApp.router）
 │   ├── di.dart                               #   GetIt + Injectable DI 配置
 │   ├── env_config.dart                       #   环境变量（dev/stag/prod）
+│   ├── database/
+│   │   └── migrations.dart                   #   项目所有 sqlite 迁移集中放（依赖业务表，故在 app/）
 │   ├── network/
 │   │   └── interceptor_handler.dart          #   拦截器回调桥接 Riverpod（依赖 auth feature，故在 app/）
-│   └── router/
-│       ├── app_router.dart                   #   GoRouter 配置 + 鉴权守卫
-│       └── routes.dart                       #   路由路径定义
+│   ├── router/
+│   │   ├── app_router.dart                   #   GoRouter 配置 + 鉴权守卫
+│   │   └── routes.dart                       #   路由路径定义
+│   └── theme/
+│       └── app_theme.dart                    #   主题（light/dark）+ 品牌色 + 设计 token
 │
 ├── core/                                     # 跨 feature 基建（零业务依赖，可独立成 package）
 │   ├── domain/value_object.dart              #   ValueObject 基类
 │   ├── error/failures.dart                   #   Failure 异常体系
+│   ├── database/
+│   │   └── sqlite_client.dart                #   通用 sqlite 封装（开库 + 迁移调度 + CRUD）
 │   ├── network/
 │   │   ├── dio_client.dart                   #   Dio 封装（get/post）
 │   │   └── interceptors/
@@ -43,12 +49,19 @@ lib/
 │   │       ├── response_interceptor.dart     #   响应 code != 200 转异常
 │   │       └── error_interceptor.dart        #   全局错误回调（通过回调通知）
 │   ├── presentation/extensions/
+│   │   ├── context_extensions.dart           #   BuildContext 简写（theme / screen / 键盘 / 导航）
 │   │   └── future_extensions.dart            #   tryCatch() 异步异常捕获
+│   ├── storage/
+│   │   └── secure_storage.dart               #   加密本地存储（token 等敏感数据）
 │   └── utils/
 │       ├── app_logger.dart                   #   日志单例
+│       ├── debouncer.dart                    #   Debouncer / Throttler（防抖 / 节流）
 │       └── map_utils.dart                    #   Map 嵌套取值工具
 │
-├── shared/                                   # 跨 feature 业务相关代码（业务通用 widget / model）
+├── shared/                                   # 跨 feature 业务相关代码（业务通用 widget / model / 全局状态）
+│   ├── providers/
+│   │   ├── locale_vm.dart                    #   语言（zh/en）全局状态（含 SP 持久化）
+│   │   └── theme_vm.dart                     #   ThemeMode 全局状态（含 SP 持久化）
 │   └── widgets/
 │       └── loading_indicator.dart            #   通用 loading widget
 │
@@ -57,7 +70,7 @@ lib/
 │   │   ├── data/                             #   ─ 落地实现（IO 边界）
 │   │   │   ├── datasource/
 │   │   │   │   ├── auth_api.dart             #     远程登录接口
-│   │   │   │   └── auth_local_storage.dart   #     本地 token/user 存储（SP）
+│   │   │   │   └── auth_local_storage.dart   #     本地存储：token（SecureStorage）+ user（SP）
 │   │   │   ├── model/                        #     DTO（不能进 domain）
 │   │   │   │   ├── login_dto.dart            #       请求体
 │   │   │   │   └── login_resp_model.dart     #       响应体（含 toDomain）
@@ -687,6 +700,304 @@ class AuthRouterListenable extends ChangeNotifier {
 | 构造函数只赋值字段 | 构造函数有副作用（订阅、IO、调用其他 Repository） |
 | 仅依赖已注册的早期对象 | 间接依赖晚期对象（通过 Riverpod / 回调等绕一圈） |
 | 启动期就需要存在（如 SharedPreferences） | 只在 UI/路由层第一次访问时才需要 |
+
+### 本地存储
+
+三种存储方案各司其职：
+
+| 存储 | 用途 | 加密 | 读 | 写 | 注册 |
+|---|---|---|---|---|---|
+| `SharedPreferences` | 普通 KV：用户偏好、缓存的非敏感数据、用户档案 | ❌ | sync | async | `app/di.dart`（`@preResolve`） |
+| `SecureStorage`（core） | 敏感数据：token、密码、加密密钥 | ✅ | sync（启动期预读） | async | `app/di.dart`（`@preResolve`） |
+| `SqliteClient`（core） | 结构化数据：订单列表、消息历史、可查询的业务表 | ❌ | async | async | `app/di.dart`（`@preResolve`） |
+
+#### 判断口诀
+
+- **敏感 → SecureStorage**（token、密码、PIN、加密密钥）
+- **KV 偏好 → SharedPreferences**（语言、主题、最近搜索、列表过滤器）
+- **多记录 / 查询 → sqlite**（订单、用户档案缓存、消息历史）
+
+#### 当前模板：`AuthLocalStorage` 混用两种
+
+```dart
+@singleton
+class AuthLocalStorage {
+  final SharedPreferences _sp;       // user（非敏感，明文 OK）
+  final SecureStorage _secure;       // token（敏感，加密）
+
+  String? getToken() => _secure.read(_tokenKey);
+  Future<void> setToken(String t) => _secure.write(_tokenKey, t);
+  User? getUser() { /* 从 _sp 反序列化 */ }
+}
+```
+
+> **不要把 token 存 SharedPreferences**——Android root 设备或 iOS 越狱设备能直接读到明文。SecureStorage 在 Android 走 EncryptedSharedPreferences，在 iOS 走 Keychain，root / 越狱也读不到。
+
+#### SecureStorage 的"同步读"是怎么做到的
+
+`flutter_secure_storage` 的原生 API 全是异步。模板里 `SecureStorage.getInstance()` 在启动期一次性 `readAll()` 进内存，DI 用 `@preResolve` 等它完成；之后 `read(key)` 直接读内存 map（**同步**），写操作既刷盘也更新内存。这样 dio 的 `AuthInterceptor.onRequest`（同步钩子）才能直接取到 token。
+
+模式和 `SharedPreferences.getInstance()` 完全一致——异步初始化，同步读，异步写。
+
+### 本地数据库（sqlite）
+
+按 dio 的三层模式组织：**通用封装在 `core/`、装配在 `app/`、表 DAO 在 feature**。
+
+#### 跨平台支持
+
+`SqliteClient.open()` 通过条件 import 自动选择合适的 factory：
+
+| 平台 | 实现 | 额外配置 |
+|---|---|---|
+| Android / iOS | sqflite 默认 plugin | 无 |
+| Windows / Linux / macOS | sqflite_common_ffi（加载 sqlite3 动态库） | 无 |
+| Web | sqflite_common_ffi_web（sqlite3 wasm + IndexedDB） | 见下 |
+
+**Web 首次运行前必须执行一次**（已为本模板执行过）：
+
+```bash
+dart run sqflite_common_ffi_web:setup
+```
+
+它会把 `sqflite_sw.js` 和 `sqlite3.wasm` 复制到 `web/` 目录，必须随 `web/` 一起提交到 git。
+
+文件结构：
+```
+lib/core/database/
+├── sqlite_client.dart                  # 主入口
+├── _platform_factory_native.dart       # 移动 / 桌面
+└── _platform_factory_web.dart          # Web
+```
+
+#### 三层结构
+
+| 层 | 内容 | 文件 |
+|---|---|---|
+| **通用封装** | `SqliteClient`：开库 + 迁移调度 + CRUD 直通 | `core/database/sqlite_client.dart` |
+| **项目装配** | 数据库名、所有迁移 SQL、DI 注册 | `app/database/migrations.dart` + `app/di.dart` |
+| **表 DAO** | 单 feature 的表读写 | `features/<x>/data/datasource/<x>_dao.dart` |
+
+#### 与 dio 完全对称
+
+| 网络 | sqlite |
+|---|---|
+| `core/network/dio_client.dart`（通用 Dio 封装） | `core/database/sqlite_client.dart`（通用 sqlite 封装） |
+| `app/di.dart` 注册 `DioClient(baseUrl, interceptors)` | `app/di.dart` 注册 `SqliteClient(dbName, migrations)` |
+| `features/<x>/data/datasource/<x>_api.dart` | `features/<x>/data/datasource/<x>_dao.dart` |
+
+#### 新增一张表的步骤
+
+**1. 在 `app/database/migrations.dart` 追加迁移**
+
+```dart
+class AppMigrations {
+  static final List<Migration> all = [
+    Migration(version: 1, sql: 'CREATE TABLE users ...'),       // 已有
+    Migration(                                                   // ← 新增
+      version: 2,
+      sql: 'CREATE TABLE orders (id INTEGER PRIMARY KEY, amount REAL)',
+    ),
+  ];
+}
+```
+
+> **不要修改历史迁移**——已发布版本里数据库已按旧 SQL 建好，改了不会重跑，必出数据腐败。
+
+**2. 在 feature 内加 DbModel + DAO**
+
+```dart
+// features/order/data/model/order_db_model.dart
+class OrderDbModel {
+  final int id;
+  final double amount;
+  OrderDbModel({required this.id, required this.amount});
+
+  factory OrderDbModel.fromRow(Map<String, Object?> r) =>
+      OrderDbModel(id: r['id'] as int, amount: r['amount'] as double);
+  Map<String, Object?> toRow() => {'id': id, 'amount': amount};
+
+  factory OrderDbModel.fromDomain(Order o) =>
+      OrderDbModel(id: o.id, amount: o.amount);
+  Order get toDomain => Order(id: id, amount: amount);
+}
+
+// features/order/data/datasource/order_dao.dart
+@singleton
+class OrderDao {
+  final SqliteClient _sqlite;
+  OrderDao(this._sqlite);
+
+  Future<List<OrderDbModel>> findAll() async {
+    final rows = await _sqlite.query('orders');
+    return rows.map(OrderDbModel.fromRow).toList();
+  }
+
+  Future<void> upsert(OrderDbModel m) => _sqlite.insert(
+        'orders',
+        m.toRow(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+}
+```
+
+**3. Repository 编排 remote + local（缓存模式示例）**
+
+```dart
+@singleton
+class OrderRepository {
+  final OrderApi _api;
+  final OrderDao _dao;
+  OrderRepository(this._api, this._dao);
+
+  Future<List<Order>> getOrders() async {
+    final cached = await _dao.findAll();
+    if (cached.isNotEmpty) return cached.map((m) => m.toDomain).toList();
+
+    final remote = await _api.getOrders();
+    for (final m in remote) {
+      await _dao.upsert(OrderDbModel.fromDomain(m.toDomain));
+    }
+    return remote.map((m) => m.toDomain).toList();
+  }
+}
+```
+
+**4. 生成代码**
+
+```bash
+dart run build_runner build --delete-conflicting-outputs
+```
+
+DAO 通过 `@singleton` 自动被 injectable 发现并注册，构造参数 `SqliteClient` 由 DI 注入。
+
+#### 三种 model 不要混用
+
+| 类型 | 用途 | 位置 |
+|---|---|---|
+| `XxxModel` | API JSON 序列化（`fromJson` / `toJson`） | `features/*/data/model/xxx_model.dart` |
+| `XxxDbModel` | sqlite 行序列化（`fromRow` / `toRow`） | `features/*/data/model/xxx_db_model.dart` |
+| `Xxx` | 领域实体 | `features/*/domain/entity/xxx.dart` |
+
+两个 model 都 ↔ 同一个 `Xxx`，**Repository 是它们的汇合点**。不要让一个 freezed 类既管 JSON 又管 db row——字段类型、空值规则、命名习惯都不一样，强行复用必埋坑。
+
+### 主题与设计 token
+
+主题数据放 `app/theme/app_theme.dart`——属于**项目装配**（品牌色、字号是这个 App 的，换项目都要改），不在 `core/`。
+
+`MaterialApp` 在 `app/app.dart` 通过 `theme` / `darkTheme` / `themeMode` 注入，业务页面通过 `Theme.of(context)`（或 `context.theme`）读取。
+
+#### 两类 token 的访问方式
+
+| 类型 | 来源 | 访问方式 | 示例 |
+|---|---|---|---|
+| **Material 标准色** | `ColorScheme`（由 seedColor 自动派生） | `context.colorScheme.primary` | 主色、表面色、错误色 |
+| **自定义 token** | `AppTheme.*` 静态常量 | 直接 import | `AppTheme.success`、`AppTheme.spaceMd` |
+
+```dart
+// 用 ColorScheme（随主题自动切换 light/dark）
+Container(color: context.colorScheme.primary)
+
+// 用自定义 token（语义色、间距、圆角等）
+Container(
+  color: AppTheme.success,
+  padding: const EdgeInsets.all(AppTheme.spaceMd),
+)
+```
+
+> **为什么自定义 token 不放进 ColorScheme**：`ColorScheme` 是 Material 设计规范的标准色槽，硬塞 success/warning 等业务语义色会绕开 Material 主题派生机制。需要随主题切换的自定义色用 [ThemeExtension](https://api.flutter.dev/flutter/material/ThemeExtension-class.html)，模板用不到先简化。
+
+#### 修改品牌色
+
+只改 `_brandSeed` 一处，整个 ColorScheme 自动重新派生：
+
+```dart
+static const _brandSeed = Color(0xFF0066FF);   // ← 改这里
+```
+
+#### 主题切换已内置
+
+`shared/providers/theme_vm.dart` 已实现 `ThemeMode` 全局状态 + SharedPreferences 持久化。`app/app.dart` 订阅了它，登录页右上角 `AppBar.actions` 图标按钮一键循环切换 system → light → dark。
+
+```dart
+// 任意 widget 内切换
+ref.read(themeVmProvider.notifier).toggle();
+
+// 或指定模式
+ref.read(themeVmProvider.notifier).setMode(ThemeMode.dark);
+
+// 读当前模式
+final mode = ref.watch(themeVmProvider);   // ThemeMode
+```
+
+**为什么 theme_vm 在 `shared/` 而不是 `features/`**：主题无业务领域归属（不属于 auth / user / 任何业务）→ 应用层共享状态 → `shared/providers/`。判断标准见前面「全局状态放哪」一节。
+
+### 国际化（i18n）与语言切换
+
+基于 `flutter_intl`（IDE 插件）+ `intl_utils`（CLI 生成器）。`pubspec.yaml` 里的 `flutter_intl:` block 是配置：
+
+```yaml
+flutter_intl:
+  enabled: true
+  main_locale: zh             # 主语言（必须有完整 key）
+  arb_dir: lib/i18/l10n
+  output_dir: lib/i18/generated
+```
+
+#### 文件结构
+
+```
+lib/i18/
+├── l10n/                         # 翻译源（arb）
+│   ├── intl_zh.arb               #   中文（main_locale，所有 key 都在这里）
+│   └── intl_en.arb               #   英文（key 要和 zh 对齐）
+└── generated/                    # intl_utils 生成（勿手改）
+    ├── l10n.dart                 #   S 类入口
+    └── intl/
+        ├── messages_all.dart
+        ├── messages_zh.dart
+        └── messages_en.dart
+```
+
+#### 新增一条文案的流程
+
+1. 在 `intl_zh.arb` 和 `intl_en.arb` 同时加 key + 翻译
+2. 跑 `dart run intl_utils:generate`（重新生成 `S` 类）
+3. 使用：
+
+```dart
+// 在 Widget 内（推荐 —— 自动响应 locale 变化）
+Text(S.of(context).loginButton)
+
+// 在 ViewModel 内（无 context）—— 用 S.current
+return S.current.invalidPhone;
+```
+
+> **`S.of(context)` vs `S.current`**：前者依赖 widget tree 的 Localizations，locale 切换时自动 rebuild；后者是全局静态，跟随最近一次 `S.load` 的 locale。validator / 业务 vm 等没有 context 的地方用 `S.current`。
+
+#### 语言切换已内置
+
+`shared/providers/locale_vm.dart` 提供 `LocaleVm`：`@Riverpod(keepAlive: true)`、SP 持久化、`toggle()` 在 zh / en 之间循环。
+
+`app/app.dart` 已订阅，`locale` 和 `supportedLocales` 都来自它：
+
+```dart
+final locale = ref.watch(localeVmProvider);
+return MaterialApp.router(
+  locale: locale,
+  supportedLocales: LocaleVm.supported,
+  localizationsDelegates: const [S.delegate, ...],
+  ...
+);
+```
+
+登录页右上角 `EN / 中` 文字按钮一键切换，整 App 立即响应。
+
+#### 加新语言（如日语）
+
+1. 新建 `lib/i18/l10n/intl_ja.arb`，key 和 zh 对齐
+2. `dart run intl_utils:generate`
+3. 在 `LocaleVm.supported` 里加 `Locale('ja')`
+4. `LocaleVm.toggle()` 改成循环逻辑（或直接用 `setLocale()` 配合选择列表 UI）
 
 ### 环境切换
 

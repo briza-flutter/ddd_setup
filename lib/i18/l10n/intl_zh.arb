@@ -1,3 +1,13 @@
 {
-  "appTitle": "Flutter Demo"
+  "appTitle": "Flutter Demo",
+  "loginPageTitle": "登录",
+  "phoneHint": "手机号",
+  "passwordHint": "密码",
+  "loginButton": "登录",
+  "homePageTitle": "首页",
+  "signOutButton": "退出登录",
+  "switchTheme": "切换主题",
+  "switchLanguage": "切换语言",
+  "invalidPhone": "手机号格式不正确",
+  "invalidPassword": "密码至少 6 位"
 }

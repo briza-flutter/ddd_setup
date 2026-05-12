@@ -1,9 +1,12 @@
+import 'package:ddd_setup/app/database/migrations.dart';
 import 'package:ddd_setup/app/env_config.dart';
+import 'package:ddd_setup/core/database/sqlite_client.dart';
 import 'package:ddd_setup/core/network/dio_client.dart';
 import 'package:ddd_setup/app/network/interceptor_handler.dart';
 import 'package:ddd_setup/core/network/interceptors/auth_interceptor.dart';
 import 'package:ddd_setup/core/network/interceptors/error_interceptor.dart';
 import 'package:ddd_setup/core/network/interceptors/response_interceptor.dart';
+import 'package:ddd_setup/core/storage/secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,6 +29,21 @@ abstract class RegisterModule {
   @preResolve
   @singleton
   Future<SharedPreferences> get sp => SharedPreferences.getInstance();
+
+  @preResolve
+  @singleton
+  Future<SecureStorage> get secureStorage => SecureStorage.getInstance();
+
+  @preResolve
+  @singleton
+  Future<SqliteClient> sqlite() async {
+    final client = SqliteClient(
+      dbName: 'ddd_setup.db',
+      migrations: AppMigrations.all,
+    );
+    await client.open();
+    return client;
+  }
 
   @singleton
   DioClient baseDio(DioInterceptorHandler errHandler) {

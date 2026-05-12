@@ -59,13 +59,71 @@ class S {
   String get appTitle {
     return Intl.message('Flutter Demo', name: 'appTitle', desc: '', args: []);
   }
+
+  /// `登录`
+  String get loginPageTitle {
+    return Intl.message('登录', name: 'loginPageTitle', desc: '', args: []);
+  }
+
+  /// `手机号`
+  String get phoneHint {
+    return Intl.message('手机号', name: 'phoneHint', desc: '', args: []);
+  }
+
+  /// `密码`
+  String get passwordHint {
+    return Intl.message('密码', name: 'passwordHint', desc: '', args: []);
+  }
+
+  /// `登录`
+  String get loginButton {
+    return Intl.message('登录', name: 'loginButton', desc: '', args: []);
+  }
+
+  /// `首页`
+  String get homePageTitle {
+    return Intl.message('首页', name: 'homePageTitle', desc: '', args: []);
+  }
+
+  /// `退出登录`
+  String get signOutButton {
+    return Intl.message('退出登录', name: 'signOutButton', desc: '', args: []);
+  }
+
+  /// `切换主题`
+  String get switchTheme {
+    return Intl.message('切换主题', name: 'switchTheme', desc: '', args: []);
+  }
+
+  /// `切换语言`
+  String get switchLanguage {
+    return Intl.message('切换语言', name: 'switchLanguage', desc: '', args: []);
+  }
+
+  /// `手机号格式不正确`
+  String get invalidPhone {
+    return Intl.message('手机号格式不正确', name: 'invalidPhone', desc: '', args: []);
+  }
+
+  /// `密码至少 6 位`
+  String get invalidPassword {
+    return Intl.message(
+      '密码至少 6 位',
+      name: 'invalidPassword',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   const AppLocalizationDelegate();
 
   List<Locale> get supportedLocales {
-    return const <Locale>[Locale.fromSubtags(languageCode: 'zh')];
+    return const <Locale>[
+      Locale.fromSubtags(languageCode: 'zh'),
+      Locale.fromSubtags(languageCode: 'en'),
+    ];
   }
 
   @override
